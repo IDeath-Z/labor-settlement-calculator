@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.deathz.laborcalc.domain.model.SelicRate;
 
-public interface BacenGateway {
+public interface SelicGateway {
 
     List<SelicRate> getSelicRateHistory(LocalDate startDate, LocalDate endDate);
 }

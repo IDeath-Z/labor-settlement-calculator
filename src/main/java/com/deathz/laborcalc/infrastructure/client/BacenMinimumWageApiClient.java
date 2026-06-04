@@ -12,44 +12,43 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.deathz.laborcalc.domain.model.SelicRate;
-import com.deathz.laborcalc.domain.ports.BacenGateway;
-import com.deathz.laborcalc.infrastructure.client.dto.BacenSelicDto;
+import com.deathz.laborcalc.domain.model.MinimumWage;
+import com.deathz.laborcalc.domain.ports.MinimumWageGateway;
+import com.deathz.laborcalc.infrastructure.client.dto.BacenSgsDto;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
-public class BacenApiClient implements BacenGateway{
+public class BacenMinimumWageApiClient implements MinimumWageGateway {
 
-    private final String selicBaseUrl;
-    private final String selicFilterUrl;
+    private final String minimumWageBaseUrl;
+    private final String minimumWageFilterUrl;
     private final HttpClient httpClient;
     private final DateTimeFormatter formatter;
     private static final String DATE_PATTERN = "dd/MM/yyyy";
     private final ObjectMapper objectMapper;
 
-    public BacenApiClient(@Value("${bacen.api.sgs.selic.url}") String selicBaseUrl, @Value("${bacen.api.sgs.selic.url.filter}") String selicFilterUrl) {
-        this.selicBaseUrl = selicBaseUrl;
-        this.selicFilterUrl = selicFilterUrl;
+    public BacenMinimumWageApiClient(@Value("${bacen.api.sgs.wage.url}") String minimumWageBaseUrl, @Value("${bacen.api.sgs.url.filter}") String minimumWageFilterUrl) {
+        this.minimumWageBaseUrl = minimumWageBaseUrl;
+        this.minimumWageFilterUrl = minimumWageFilterUrl;
         this.httpClient = HttpClient.newHttpClient();
         this.formatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
         this.objectMapper = new ObjectMapper();
     }
 
     @Override
-    public List<SelicRate> getSelicRateHistory(LocalDate startDate, LocalDate endDate) {
-        
+    public List<MinimumWage> getMinimumWageHistory(LocalDate startDate, LocalDate endDate) {
         String startDateStr = startDate.format(formatter);
         String endDateStr = endDate.format(formatter);
 
-        String filterQuery = String.format(this.selicFilterUrl, startDateStr, endDateStr);
+        String filterQuery = String.format(this.minimumWageFilterUrl, startDateStr, endDateStr);
 
-        String finalUrl = this.selicBaseUrl + filterQuery;
+        String finalUrl = this.minimumWageBaseUrl + filterQuery;
 
-        return fetchSelicRates(finalUrl);
+        return fetchMinimumWageRates(finalUrl);
     }
 
-    private List<SelicRate> fetchSelicRates(String url) {
+    private List<MinimumWage> fetchMinimumWageRates(String url) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
@@ -59,20 +58,20 @@ public class BacenApiClient implements BacenGateway{
                 HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
                 String responseBody = response.body();
 
-                List<BacenSelicDto> selicDtos = objectMapper.readValue(
+                List<BacenSgsDto> minimumWageDtos = objectMapper.readValue(
                     responseBody, 
-                    new TypeReference<List<BacenSelicDto>>() {}
+                    new TypeReference<List<BacenSgsDto>>() {}
                 );
 
-                return selicMapper(selicDtos);
+                return minimumWageMapper(minimumWageDtos);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch Selic rate history", e);
+            throw new RuntimeException("Failed to fetch Minimum wage history", e);
         }
     }
 
-    private List<SelicRate> selicMapper(List<BacenSelicDto> selicDtos) {
-        return selicDtos.stream()
-            .map(dto -> new SelicRate(
+    private List<MinimumWage> minimumWageMapper(List<BacenSgsDto> minimumWageDtos) {
+        return minimumWageDtos.stream()
+            .map(dto -> new MinimumWage(
                 LocalDate.parse(dto.date(), formatter), 
                 new BigDecimal(dto.value())))
             .toList();

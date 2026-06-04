@@ -5,5 +5,5 @@ import java.time.LocalDate;
 
 public record SelicRate(
     LocalDate date,
-    BigDecimal taxValue
+    BigDecimal rateValue
 ) {}
