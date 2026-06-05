@@ -24,9 +24,9 @@ public record SettlementInputRequest(
     @Schema(description = "Start date of the shift rotation", example = "2026-01-01")
     LocalDate shiftRotationStart,
 
-    @Schema(description = "Interval of the shift rotation, in months", example = "30")
+    @Min(1) @Max(12) @Schema(description = "Interval of the shift rotation, in months", example = "2")
     Integer shiftRotationInterval,
 
-    @NotNull @Min(1) @Max(100) @Schema(description = "Additional percentage for the settlement calculation", example = "40")
+    @NotNull @Min(10) @Max(40) @Schema(description = "Additional percentage for the settlement calculation", example = "40")
     Integer additionalPercentage
 ) {}
