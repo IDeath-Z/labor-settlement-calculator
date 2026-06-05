@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Laboral</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="card">
+        <div class="card-header">
+            <div class="app-label">Cálculo trabalhista</div>
+            <div class="app-sub">Calculadora de insalubridade / periculosidade</div>
+        </div>
+
+        <div class="card-body">
+            <div>
+                <div class="section-label">Período de apuração</div>
+                <div class="field-row">
+                    <div class="field" id="field-start">
+                        <label>Início do período <span class="req">*</span></label>
+                        <input type="date" id="startDate">
+                        <span class="error-msg"></span>
+                    </div>
+                    <div class="field" id="field-end">
+                        <label>Fim do período <span class="req">*</span></label>
+                        <input type="date" id="endDate">
+                        <span class="error-msg"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div>
+                <div class="section-label">Adicional</div>
+                <div style="max-width: 160px;">
+                    <div class="field" id="field-pct">
+                        <label>% adicional <span class="req">*</span></label>
+                        <input type="number" id="additionalPct" min="10" max="40" step="10" placeholder="ex: 40">
+                        <span class="error-msg"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="toggle-block" id="block-rodizio">
+                <div class="toggle-header" onclick="toggleBlock('rodizio')">
+                    <div class="toggle-icon"></div>
+                    <div class="toggle-info">
+                        <div class="toggle-title">Período de rodízio</div>
+                        <div class="toggle-desc">Meses em que o funcionário não tem direito ao adicional</div>
+                    </div>
+                </div>
+                <div class="toggle-body">
+                    <div class="field-row">
+                        <div class="field" id="field-rotationStart">
+                            <label>Primeiro mês do rodízio <span class="req">*</span></label>
+                            <input type="date" id="rotationStart" disabled>
+                            <span class="error-msg"></span>
+                        </div>
+                        <div class="field" id="field-rotationInterval">
+                            <label>Trabalha a cada (meses) <span class="req">*</span></label>
+                            <input type="number" id="rotationInterval" min="1" max="12" step="1" placeholder="ex: 2" disabled>
+                            <span class="error-msg"></span>
+                        </div>
+                    </div>
+                    <div class="hint">
+                        Ex: início <strong>01/03/2026</strong>, intervalo <strong>2</strong> → não trabalha jan, fev — rodízio mar — não trabalha abr, mai — rodízio jun…
+                    </div>
+                </div>
+            </div>
+
+            <div class="toggle-block" id="block-pandemic">
+                <div class="toggle-header" onclick="toggleBlock('pandemic')">
+                    <div class="toggle-icon"></div>
+                    <div class="toggle-info">
+                        <div class="toggle-title">Período pandêmico</div>
+                        <div class="toggle-desc">Intervalo com suspensão ou redução das atividades</div>
+                    </div>
+                </div>
+                <div class="toggle-body">
+                    <div class="field-row">
+                        <div class="field" id="field-pandemicStart">
+                            <label>Início <span class="req">*</span></label>
+                            <input type="date" id="pandemicStart" disabled>
+                            <span class="error-msg"></span>
+                        </div>
+                        <div class="field" id="field-pandemicEnd">
+                            <label>Fim <span class="req">*</span></label>
+                            <input type="date" id="pandemicEnd" disabled>
+                            <span class="error-msg"></span>
+                        </div>
+                    </div>
+                    <div class="hint">
+                        Os meses dentro deste período serão desconsiderados no cálculo.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer">
+            <div class="success-banner" id="success-banner">
+                ✓ &nbsp;Relatório gerado com sucesso!
+            </div>
+            <button class="btn-submit" onclick="handleSubmit()">Calcular &rarr;</button>
+            <div class="json-preview" id="json-preview">
+                <div class="json-label">Request body</div>
+                <pre id="json-output"></pre>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

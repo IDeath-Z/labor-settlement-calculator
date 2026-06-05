@@ -159,9 +159,8 @@ public class SpreadsheetReportGeneratorAdapter implements ReportGeneratorPort {
                     for (int i = 2; i < TABLE_HEADERS.length; i++) {
                         Cell exceptionCell = row.createCell(i);
                         exceptionCell.setCellStyle(centerStyle);
-                        if (i == 2) {
+                        if (i == 2)
                             exceptionCell.setCellValue(NULL_PLACE_HOLDER);
-                        }
                     }
                     sheet.addMergedRegion(new CellRangeAddress(row.getRowNum(), row.getRowNum(), 2, TABLE_HEADERS.length - 1));
                     continue; 
