@@ -70,11 +70,11 @@ public class SettlementCalculatorService {
             BigDecimal periodTotalWithSelic = calculatePeriodTotalPlusSelic(periodTotal, totalSelicAmount);
 
             MonthlyCompetenceDetail detail = new MonthlyCompetenceDetail(
-                periodStartDate, 
+                periodStartDate,
                 periodEndDate,
                 daysWorked,
                 currentWage,
-                BigDecimal.valueOf(input.additionalPercentage()),
+                input.additionalPercentage(),
                 calculateIntegralAdditional(currentWage, input.additionalPercentage()), 
                 proportionalAdditional,
                 proportionalThirteenth,

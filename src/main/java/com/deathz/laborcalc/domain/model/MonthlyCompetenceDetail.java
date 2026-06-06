@@ -8,7 +8,7 @@ public record MonthlyCompetenceDetail(
     LocalDate periodEnd,
     Integer daysWorked,
     BigDecimal currentMinimumWage,
-    BigDecimal additionalPercentage,
+    Integer additionalPercentage,
     BigDecimal fullAdditionalAmount,
     BigDecimal proportionalAdditionalAmount,
     BigDecimal thirteenthSalaryProportion,
