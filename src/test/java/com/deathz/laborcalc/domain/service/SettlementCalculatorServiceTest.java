@@ -19,7 +19,7 @@ import com.deathz.laborcalc.domain.model.MinimumWage;
 import com.deathz.laborcalc.domain.model.MonthlyCompetenceDetail;
 import com.deathz.laborcalc.domain.model.SelicRate;
 import com.deathz.laborcalc.domain.model.SettlementInput;
-import com.deathz.laborcalc.domain.service.fixtures.SettlementInputFixture;
+import com.deathz.laborcalc.fixtures.SettlementInputFixture;
 
 import converters.BigDecimalConverter;
 import converters.LocalDateConverter;

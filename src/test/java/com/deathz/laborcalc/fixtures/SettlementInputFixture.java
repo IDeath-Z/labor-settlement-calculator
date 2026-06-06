@@ -1,4 +1,4 @@
-package com.deathz.laborcalc.domain.service.fixtures;
+package com.deathz.laborcalc.fixtures;
 
 import java.time.LocalDate;
 
@@ -6,6 +6,21 @@ import com.deathz.laborcalc.domain.model.SettlementInput;
 
 
 public record SettlementInputFixture() {
+
+    public static SettlementInput createWithoutPandemicOrShiftRotation() {
+        LocalDate startDate = LocalDate.of(2020, 9, 1);
+        LocalDate endDate = LocalDate.of(2020, 9, 30);
+        
+        return new SettlementInput(
+            startDate,
+            endDate,
+            null,
+            null,
+            null,
+            null,
+            40
+        );
+    }
 
     public static SettlementInput createWithPandemicPeriod() {
         LocalDate startDate = LocalDate.of(2020, 9, 1);

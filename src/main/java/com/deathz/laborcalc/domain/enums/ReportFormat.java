@@ -3,7 +3,8 @@ package com.deathz.laborcalc.domain.enums;
 public enum ReportFormat {
 
     SPREADSHEET("SPREADSHEET"),
-    PDF("PDF");
+    PDF("PDF"),
+    UNSUPPORTED("UNSUPPORTED"); // Only for testing purposes
 
         private final String code;
 
