@@ -22,6 +22,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.deathz.laborcalc.application.exceptions.ReportGenerationException;
+import com.deathz.laborcalc.application.exceptions.enums.ReportGenerationErrorMessage;
 import com.deathz.laborcalc.domain.enums.ReportFormat;
 import com.deathz.laborcalc.domain.model.MonthlyCompetenceDetail;
 import com.deathz.laborcalc.domain.model.SettlementResult;
@@ -45,7 +47,6 @@ public class SpreadsheetReportGeneratorAdapter implements ReportGeneratorPort {
     private static final String SHEET_NAME = "Cálculo Trabalhista";
     private static final String BRASIL_CURRENCY_FORMAT = "R$ #,##0.00";
     private static final String PERCENTAGE_FORMAT = "0.00%";
-    private static final String ERROR_GENERATING_REPORT = "Error generating Excel report";
 
     private static final String NULL_PLACE_HOLDER = "PANDEMIA / RODÍZIO";
     private static final String[] TABLE_HEADERS = {
@@ -106,7 +107,7 @@ public class SpreadsheetReportGeneratorAdapter implements ReportGeneratorPort {
             return out.toByteArray();
 
         } catch (IOException e) {
-            throw new RuntimeException(ERROR_GENERATING_REPORT, e);
+            throw new ReportGenerationException(ReportGenerationErrorMessage.SPREADSHEET_GENERATING_ERROR.getMessage(), e);
         }
     }
 

@@ -12,6 +12,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.deathz.laborcalc.application.exceptions.ExternalServiceNoDataFoundException;
+import com.deathz.laborcalc.application.exceptions.enums.ExternalServiceNoDataFoundErrorMessage;
 import com.deathz.laborcalc.domain.model.SelicRate;
 import com.deathz.laborcalc.domain.ports.SelicGateway;
 import com.deathz.laborcalc.infrastructure.client.dto.BacenSgsDto;
@@ -65,7 +67,7 @@ public class BacenSelicApiClient implements SelicGateway{
 
                 return selicMapper(selicDtos);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch Selic rate history", e);
+            throw new ExternalServiceNoDataFoundException(ExternalServiceNoDataFoundErrorMessage.BACEN_SELIC_NOT_FOUND.getMessage(), e);
         }
     }
 

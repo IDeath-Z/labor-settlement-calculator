@@ -195,7 +195,16 @@ async function handleSubmit() {
         });
 
         if (!response.ok) {
-            throw new Error(`Erro na API: ${response.status}`);
+            let backendMessage = `Erro no servidor (${response.status})`;
+            try {
+                const errorData = await response.json();
+                if (errorData.message) {
+                    backendMessage = errorData.message;
+                }
+            } catch (e) {
+                // Default message will be used if response is not JSON or doesn't have 'message' field
+            }
+            throw new Error(backendMessage);
         }
 
         const blob = await response.blob();
@@ -212,10 +221,14 @@ async function handleSubmit() {
 
         const banner = document.getElementById('success-banner');
         banner.style.display = 'flex';
-        setTimeout(() => banner.style.display = 'none', 5000); // Some após 5s
+        setTimeout(() => banner.style.display = 'none', 5000);
 
     } catch (error) {
-        console.error('Falha na comunicação com o backend:', error);
+        console.error('Falha na comunicação:', error);
+        const errorBanner = document.getElementById('error-banner');
+        errorBanner.innerHTML = `✖ &nbsp;${error.message}`;
+        errorBanner.style.display = 'flex';
+        setTimeout(() => errorBanner.style.display = 'none', 7000);
     } finally {
         btn.disabled = false;
         btn.textContent = originalText;

@@ -2,6 +2,10 @@ package com.deathz.laborcalc.application.usecases;
 
 import java.util.List;
 
+import com.deathz.laborcalc.application.exceptions.BusinessRuleException;
+import com.deathz.laborcalc.application.exceptions.ReportGenerationException;
+import com.deathz.laborcalc.application.exceptions.enums.BusinessRuleErrorMessage;
+import com.deathz.laborcalc.application.exceptions.enums.ReportGenerationErrorMessage;
 import com.deathz.laborcalc.domain.enums.ReportFormat;
 import com.deathz.laborcalc.domain.model.SettlementResult;
 import com.deathz.laborcalc.domain.ports.ReportGeneratorPort;
@@ -15,13 +19,18 @@ public class GenerateReportUseCase {
 
     public byte[] execute(List<SettlementResult> results, ReportFormat format) {
         if (results == null || results.isEmpty())
-            throw new IllegalArgumentException("No settlement results to generate report.");
+            throw new BusinessRuleException(BusinessRuleErrorMessage.SETTLEMENT_EMPTY.getMessage());
 
         ReportGeneratorPort generator = reportGenerators.stream()
             .filter(port -> port.supports(format))
             .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Unsupported format: " + format));
+            .orElseThrow(() -> new BusinessRuleException(BusinessRuleErrorMessage.UNSUPPORTED_FORMAT.getMessage()));
 
-        return generator.generate(results);
+        byte[] report = generator.generate(results);
+
+        if (report.length == 0)
+            throw new ReportGenerationException(ReportGenerationErrorMessage.ERROR_GENERATING_REPORT.getMessage());
+
+        return report;
     }
 }

@@ -12,6 +12,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.deathz.laborcalc.application.exceptions.ExternalServiceNoDataFoundException;
+import com.deathz.laborcalc.application.exceptions.enums.ExternalServiceNoDataFoundErrorMessage;
 import com.deathz.laborcalc.domain.model.MinimumWage;
 import com.deathz.laborcalc.domain.ports.MinimumWageGateway;
 import com.deathz.laborcalc.infrastructure.client.dto.BacenSgsDto;
@@ -65,7 +67,7 @@ public class BacenMinimumWageApiClient implements MinimumWageGateway {
 
                 return minimumWageMapper(minimumWageDtos);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch Minimum wage history", e);
+            throw new ExternalServiceNoDataFoundException(ExternalServiceNoDataFoundErrorMessage.BACEN_MINIMUM_WAGE_CONNECTION_ERROR.getMessage(), e);
         }
     }
 

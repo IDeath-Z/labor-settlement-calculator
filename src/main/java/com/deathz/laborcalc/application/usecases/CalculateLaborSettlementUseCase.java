@@ -2,6 +2,8 @@ package com.deathz.laborcalc.application.usecases;
 
 import java.util.List;
 
+import com.deathz.laborcalc.application.exceptions.ExternalServiceNoDataFoundException;
+import com.deathz.laborcalc.application.exceptions.enums.ExternalServiceNoDataFoundErrorMessage;
 import com.deathz.laborcalc.domain.model.MinimumWage;
 import com.deathz.laborcalc.domain.model.SelicRate;
 import com.deathz.laborcalc.domain.model.SettlementInput;
@@ -23,11 +25,14 @@ public class CalculateLaborSettlementUseCase {
 
         List<MinimumWage> minimumWages = minimumWageGateway.getMinimumWageHistory(input.startDate(), input.endDate());
 
-        System.out.println("Minimum wages retrieved: " + minimumWages.size());
+        if (minimumWages == null || minimumWages.isEmpty())
+            throw new ExternalServiceNoDataFoundException(ExternalServiceNoDataFoundErrorMessage.BACEN_MINIMUM_WAGE_NOT_FOUND.getMessage());
+        
         List<SelicRate> selicRates = selicGateway.getSelicRateHistory(input.startDate(), input.endDate());
 
-        System.out.println("Selic rates retrieved: " + selicRates.size());
-        
+        if (selicRates == null || selicRates.isEmpty())
+            throw new ExternalServiceNoDataFoundException(ExternalServiceNoDataFoundErrorMessage.BACEN_SELIC_NOT_FOUND.getMessage());
+
         return settlementCalculatorService.calculate(input, minimumWages, selicRates);
     }
 }
