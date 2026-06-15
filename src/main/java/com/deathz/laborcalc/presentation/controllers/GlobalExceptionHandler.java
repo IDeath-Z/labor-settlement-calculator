@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.deathz.laborcalc.application.exceptions.BusinessRuleException;
 import com.deathz.laborcalc.application.exceptions.ExternalServiceNoDataFoundException;
 import com.deathz.laborcalc.application.exceptions.ReportGenerationException;
+import com.deathz.laborcalc.domain.exceptions.IncompleteSeriesException;
 import com.deathz.laborcalc.presentation.dto.ApiErrorResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,7 +37,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(status).body(error);
     }
 
-    @ExceptionHandler(ExternalServiceNoDataFoundException.class)
+    @ExceptionHandler({ExternalServiceNoDataFoundException.class, IncompleteSeriesException.class})
     public ResponseEntity<ApiErrorResponse> handleBadGateway(ExternalServiceNoDataFoundException e, HttpServletRequest request) {
         log.warn("External service error: {}", e.getMessage());
         

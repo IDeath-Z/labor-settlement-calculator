@@ -3,9 +3,12 @@ package com.deathz.laborcalc.domain.service;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +18,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.converter.ConvertWith;
 import org.junit.jupiter.params.provider.CsvFileSource;
 
+import com.deathz.laborcalc.domain.exceptions.IncompleteSeriesException;
 import com.deathz.laborcalc.domain.model.MinimumWage;
 import com.deathz.laborcalc.domain.model.MonthlyCompetenceDetail;
 import com.deathz.laborcalc.domain.model.SelicRate;
@@ -139,5 +143,27 @@ public class SettlementCalculatorServiceTest {
             () -> assertNull(detail.selicAmount()),
             () -> assertNull(detail.totalWithSelic())
         );
+    }
+
+    @Test
+    @DisplayName("Should throw IncompleteSeriesException when a required month is missing from the Bacen series")
+    void shouldThrowIncompleteSeriesExceptionWhenMonthIsMissing() {
+        SettlementInput input = SettlementInputFixture.createWithProvidedStartAndEnd(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 2, 29));
+
+        List<MinimumWage> wages = List.of(
+            new MinimumWage(LocalDate.of(2024, 1, 1), new BigDecimal("1412.00")),
+            new MinimumWage(LocalDate.of(2024, 2, 1), new BigDecimal("1412.00"))
+        );
+
+        List<SelicRate> selic = List.of(
+            new SelicRate(LocalDate.of(2024, 1, 1), new BigDecimal("0.80"))
+        );
+
+        IncompleteSeriesException ex = assertThrows(
+            IncompleteSeriesException.class,
+            () -> settlementCalculatorService.calculate(input, wages, selic)
+        );
+
+        assertTrue(ex.getMessage().contains(YearMonth.of(2024, 2).toString()));
     }
 }

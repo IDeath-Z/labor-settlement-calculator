@@ -7,6 +7,19 @@ import com.deathz.laborcalc.domain.model.SettlementInput;
 
 public record SettlementInputFixture() {
 
+    public static SettlementInput createWithProvidedStartAndEnd(LocalDate startDate, LocalDate endDate) {
+        
+        return new SettlementInput(
+            startDate,
+            endDate,
+            null,
+            null,
+            null,
+            null,
+            40
+        );
+    }
+
     public static SettlementInput createWithoutPandemicOrShiftRotation() {
         LocalDate startDate = LocalDate.of(2020, 9, 1);
         LocalDate endDate = LocalDate.of(2020, 9, 30);

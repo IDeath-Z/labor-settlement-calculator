@@ -14,6 +14,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.deathz.laborcalc.domain.exceptions.IncompleteSeriesException;
 import com.deathz.laborcalc.domain.model.MinimumWage;
 import com.deathz.laborcalc.domain.model.MonthlyCompetenceDetail;
 import com.deathz.laborcalc.domain.model.SelicRate;
@@ -34,6 +35,8 @@ public class SettlementCalculatorService {
             SelicRate::date, 
             SelicRate::rateValue
         );
+
+        validateSeriesCoverPeriod(input, wageHistoryMap, selicHistoryMap);
         
         YearMonth currentMonth = YearMonth.from(input.startDate());
         YearMonth endMonth = YearMonth.from(input.endDate());
@@ -128,6 +131,20 @@ public class SettlementCalculatorService {
                 valueExtractor,
                 (existingValue, newValue) -> newValue 
             ));
+    }
+
+    private void validateSeriesCoverPeriod(SettlementInput input,
+        Map<YearMonth, BigDecimal> wageMap, Map<YearMonth, BigDecimal> selicMap) {
+
+        YearMonth current = YearMonth.from(input.startDate());
+        YearMonth end = YearMonth.from(input.endDate());
+
+        while (!current.isAfter(end)) {
+            if (!wageMap.containsKey(current) || !selicMap.containsKey(current))
+                throw new IncompleteSeriesException(current);
+
+            current = current.plusMonths(1);
+        }
     }
 
     private boolean isPandemicMonth(YearMonth currentMonth, LocalDate pandemicStart, LocalDate pandemicEnd) {
@@ -235,7 +252,7 @@ public class SettlementCalculatorService {
         YearMonth current = startMonth;
 
         while (!current.isAfter(endMonth)) {
-            BigDecimal monthlyRate = selicMap.getOrDefault(current, BigDecimal.ZERO);
+            BigDecimal monthlyRate = selicMap.get(current);
 
             BigDecimal factor = BigDecimal.ONE.add(
                 monthlyRate.divide(BigDecimal.valueOf(100), 8, RoundingMode.HALF_UP)
