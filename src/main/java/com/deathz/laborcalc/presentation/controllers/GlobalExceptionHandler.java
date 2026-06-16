@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({ExternalServiceNoDataFoundException.class, IncompleteSeriesException.class})
-    public ResponseEntity<ApiErrorResponse> handleBadGateway(ExternalServiceNoDataFoundException e, HttpServletRequest request) {
+    public ResponseEntity<ApiErrorResponse> handleBadGateway(RuntimeException e, HttpServletRequest request) {
         log.warn("External service error: {}", e.getMessage());
         
         HttpStatus status = HttpStatus.BAD_GATEWAY;
